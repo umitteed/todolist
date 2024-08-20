@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>TODOリスト</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>TODOリスト</h1>
+        <form action="/todos/saveTodo" method="post">
+            <input type="text" name="taskName" placeholder="新しいタスクを追加">
+            <button type="submit">追加</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>タスク名</th>
+                    <th>ステータス</th>
+                    <th>チェック</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="todo : ${listTodos}">
+                    <td th:text="${todo.taskName}">タスク名</td>
+                    <td th:text="${todo.status ? '完了' : '未完了'}">ステータス</td>
+                    <td>
+                        <form action="/todos/updateStatus" method="post" style="display:inline;" onsubmit="prepareForm(this);">
+                            <input type="hidden" name="status" value="false"/>
+                            <input type="checkbox" th:checked="${todo.status}" name="statusCheckbox" value="true">
+                            <input type="hidden" th:value="${todo.id}" name="todoId">
+                            <button type="submit">保存</button>
+                        </form>
+                        <form action="/todos/deleteTodo" method="post" style="display:inline;">
+                            <input type="hidden" th:value="${todo.id}" name="todoId">
+                            <button type="submit">削除</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <script>
+            function prepareForm(form) {
+                const checkbox = form.querySelector('input[name="statusCheckbox"]');
+                const hiddenInput = form.querySelector('input[name="status"]');
+                hiddenInput.value = checkbox.checked ? "true" : "false";
+            }
+        </script>
+    </div>
+</body>
+
+</html>
